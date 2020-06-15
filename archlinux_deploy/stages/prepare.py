@@ -19,12 +19,10 @@ from typing import List, Callable
 import virtualbox
 
 def check_for_vboxapi():
-    utils.colored_output("Stage 1: check_for_vboxapi", "info")
     try:
         import vboxapi
     except ModuleNotFoundError:
-        raise BaseStageException("Stage 1 Error: Substage check_for_vboxapi FAILED:\n"
-                                 "It seems like vboxapi isn't installed as a python module.\n"
+        raise BaseStageException("It seems like vboxapi isn't installed as a python module.\n"
                                  "Here is the following fix:\n\n"
                                  "1. Go to this link: https://www.virtualbox.org/wiki/Downloads\n"
                                  "2. Go to the header: VirtualBox x.x.xx Software Developer Kit (SDK)\n"
@@ -40,3 +38,16 @@ def check_for_vboxapi():
 
 def run():
     stages: List[Callable] = [check_for_vboxapi]
+    for stage in stages:
+        stage_name: str = stage.__name__
+        utils.colored_output(f"Stage 1 Substage {stage_name} started!", "info")
+        try:
+            stage()
+        except BaseStageException as error:
+            message = error.args[0]
+            utils.colored_output(f"Stage 1 Substage {stage_name} FAILED:", "error")
+            utils.colored_output(message, "error")
+            return
+        utils.colored_output(f"Stage 1 Substage {stage_name} completed!", "success")
+
+run()
