@@ -13,4 +13,45 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from setuptools import setup, find_packages
 
+with open("requirements.txt", "r") as req:
+    requirements = req.read().splitlines()
+
+with open("README.md", "r") as readme:
+    long_description = readme.read()
+
+setup(
+    name="archlinux-deploy",
+    version="0.1.0",
+    description="Deploys a VirtualBox Arch Linux VM automatically.",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    author="ALinuxPerson",
+    author_email="micheal02052007@gmail.com",
+    python_requires="Python>=3.6",
+    url="https://github.com/ALinuxPerson/archlinux-deploy",
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    install_requires=requirements,
+    include_package_data=True,
+    license='GNU GPLv3',
+    classifiers=[
+        "Development Status :: 1 - Planning",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Intended Audience :: End Users/Desktop",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "Natural Language :: English",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: BSD :: FreeBSD",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Utilities",
+        "Typing :: Typed"
+    ],
+)
