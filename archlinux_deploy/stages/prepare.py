@@ -25,7 +25,9 @@ import os
 
 def check_for_vboxapi():
     try:
+        print("[blue]Checking if module 'vboxapi' is installed...")
         import vboxapi
+        print("[blue]It is.")
     except ModuleNotFoundError:
         raise BaseStageException("It seems like vboxapi isn't installed as a python module.\n"
                                  "Here is the following fix:\n\n"
