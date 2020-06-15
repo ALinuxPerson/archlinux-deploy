@@ -36,7 +36,7 @@ def check_for_vboxapi():
                                  "8.1. If on a POSIX-based distribution (e.g. Linux, Darwin, FreeBSD) type this:\n"
                                  "'$ sudo python vboxapisetup.py install'\n"
                                  "8.2. If on a Windows system, type this:\n"
-                                 "'python vboxapisetup.py install'", "error")
+                                 "'python vboxapisetup.py install'", "error") from None
 
 def run():
     stages: List[Callable] = [check_for_vboxapi]
