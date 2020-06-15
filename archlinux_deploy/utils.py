@@ -21,7 +21,7 @@ def colored_output(message: Any, level: str):
         "info": "[bold blue]🛈: ",
         "warn": "[bold yellow]⚠: ",
         "success": "[bold green]✔: ",
-        "error": "[bold error]✗: "
+        "error": "[bold red]✗: "
     }
 
     to_print: List[str] = str(message).splitlines()
