@@ -29,7 +29,7 @@ setup(
     long_description_content_type='text/markdown',
     author="ALinuxPerson",
     author_email="micheal02052007@gmail.com",
-    python_requires="Python>=3.6",
+    python_requires=">=3.6.0",
     url="https://github.com/ALinuxPerson/archlinux-deploy",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     install_requires=requirements,
