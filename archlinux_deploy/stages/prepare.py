@@ -14,9 +14,14 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from archlinux_deploy.stages.exceptions import BaseStageException
-from archlinux_deploy import utils
 from typing import List, Callable
+from archlinux_deploy import utils
+from bs4 import BeautifulSoup
+from rich import print
 import virtualbox
+import requests
+import time
+import os
 
 def check_for_vboxapi():
     try:
@@ -36,8 +41,22 @@ def check_for_vboxapi():
                                  "8.2. If on a Windows system, type this:\n"
                                  "'python vboxapisetup.py install'", "error") from None
 
+def download_latest_iso():
+    arch_linux_website: str = "http://mirror.rackspace.com/archlinux/iso/latest/"
+    page: str = requests.get(arch_linux_website).text
+    soup: BeautifulSoup = BeautifulSoup(page, "html.parser")
+    all_isos: List[str] = [arch_linux_website + "/" + node.get("href") for node in soup.find_all("a") if node.get("href").endswith("iso")]
+    with open("./arch-linux.iso", "wb") as iso:
+        if os.path.exists("./arch-linux.iso"):
+            print("[blue]ISO seems to be already downloaded, continuing...")
+            return
+        response: requests.Response = requests.get(all_isos[0], stream=True)
+        print("[blue]Writing Arch Linux ISO to disk...")
+        for data in response.iter_content(chunk_size=1024):
+            iso.write(data)
+
 def run():
-    stages: List[Callable] = [check_for_vboxapi]
+    stages: List[Callable] = [check_for_vboxapi, download_latest_iso]
     for stage in stages:
         stage_name: str = stage.__name__
         utils.colored_output(f"Stage 1 Substage {stage_name} started!", "info")
@@ -49,3 +68,5 @@ def run():
             utils.colored_output(message, "error")
             return
         utils.colored_output(f"Stage 1 Substage {stage_name} completed!", "success")
+
+run()
