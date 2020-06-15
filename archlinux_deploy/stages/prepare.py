@@ -13,20 +13,19 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from archlinux_deploy.stages.exceptions import BaseStageException
-from typing import List, Callable
+from archlinux_deploy.stages.exceptions import BaseStageException  # type: ignore
 from archlinux_deploy import utils
-from bs4 import BeautifulSoup
+from typing import List, Callable
+from bs4 import BeautifulSoup  # type: ignore
 from rich import print
-import virtualbox
+import virtualbox  # type: ignore
 import requests
-import time
 import os
 
 def check_for_vboxapi():
     try:
         print("[blue]Checking if module 'vboxapi' is installed...")
-        import vboxapi
+        import vboxapi  # type: ignore
         print("[blue]It is.")
     except ModuleNotFoundError:
         raise BaseStageException("It seems like vboxapi isn't installed as a python module.\n"
