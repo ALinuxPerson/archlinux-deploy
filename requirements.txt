@@ -1,0 +1,2 @@
+rich==2.2.2
+virtualbox==2.0.0
