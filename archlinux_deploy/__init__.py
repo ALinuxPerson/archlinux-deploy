@@ -13,4 +13,9 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import os
 
+VM_NAME: str = os.getenv("ALD_VM_NAME", "arch-linux")
+VM_VRAM_SIZE: int = int(os.getenv("ALD_VM_VRAM_SIZE", 16))
+VM_MEM_SIZE: int = int(os.getenv("ALD_VM_MEM_SIZE", 1024))
+VM_IGNORE_DUPLICATES: bool = bool(int(os.getenv("ALD_VM_IGNORE_DUPLICATES", 0)))
