@@ -22,3 +22,4 @@ VM_MEM_SIZE: int = int(os.getenv("ALD_VM_MEM_SIZE", 1024))
 VM_IGNORE_DUPLICATES: bool = bool(int(os.getenv("ALD_VM_IGNORE_DUPLICATES", 0)))
 # shouldn't matter if the whitespace is escaped or not
 VBOX_VMS_LOCATION: str = os.getenv("ALD_VBOX_VMS_LOCATION", os.path.join(str(pathlib.Path.home()), "VirtualBox VMs"))
+VM_HDD_SIZE: int = int(os.getenv("ALD_VM_HDD_SIZE", 20480))
