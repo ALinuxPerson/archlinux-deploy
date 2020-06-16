@@ -13,12 +13,36 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from archlinux_deploy.stages import exceptions
+from archlinux_deploy import VM_NAME, VM_MEM_SIZE, VM_VRAM_SIZE, VM_IGNORE_DUPLICATES, VBOX_VMS_LOCATION, VM_HDD_SIZE
+from archlinux_deploy.stages.exceptions import BaseStageException  # type: ignore
 from archlinux_deploy import utils
 from typing import List, Callable
+import virtualbox  # type: ignore
+from rich import print
 
 def create_vm():
-    pass
+    vbox: virtualbox.VirtualBox = virtualbox.VirtualBox()
+    vm_names: List[str] = [machine.name for machine in vbox.machines]
+    if VM_NAME in vm_names:
+        if VM_IGNORE_DUPLICATES is False:
+            raise BaseStageException(
+                F"It seems like there's a vm that has the same name that was going to be created ({VM_NAME}).\n"
+                F"Either rename the VM, set the vm_name in config.ini to something else or set ignore_duplicates to 1 in the environment variables."
+            )
+        print(f"[yellow]There's a VM with the same name ({VM_NAME}). Continuing anyway...")
+
+    try:
+        vm: virtualbox.library.IMachine = vbox.create_machine(
+            name="arch-linux",
+            os_type_id="ArchLinux_64",
+            groups=["/"],
+            flags="",
+            settings_file=""
+        )
+        vbox.register_machine(vm)
+    except virtualbox.library_ext.library.VBoxErrorFileError:
+        pass
+    print("[blue]Created and registered Arch Linux VM." if "arch-linux" not in vm_names else "[blue]Got Arch Linux VM.")
 
 def set_vm_config():
     pass
@@ -36,7 +60,7 @@ def run():
         utils.colored_output(f"Stage 2 Substage {stage_name} started!", "info")
         try:
             stage()
-        except exceptions.BaseStageException as error:
+        except BaseStageException as error:
             message: str = error.args[0]
             utils.colored_output(
                 f"Stage 2 Substage {stage_name} FAILED:\n"
@@ -46,3 +70,5 @@ def run():
             return
         utils.colored_output(f"Stage 2 Substage {stage_name} completed!", "success")
     utils.colored_output("Stage 2 completed!", "success")
+
+run()
