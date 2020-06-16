@@ -20,6 +20,9 @@ from typing import List, Callable
 import virtualbox  # type: ignore
 from rich import print
 import subprocess
+import os
+
+previous_dir: str = os.getcwd()
 
 def sp_call(command: str, accepted_return_codes: List[int] = None, ignore_return_code: bool = False):
     if accepted_return_codes is None:
@@ -99,7 +102,29 @@ def set_vm_config():
     print("[green]Operation successful.")
 
 def create_vm_controllers():
-    pass
+    # have no idea to use virtualbox module beyond this, using subprocess instead
+    print(f"[blue]Creating VDI file with the size of {VM_HDD_SIZE} MB.")
+    os.chdir(VBOX_VMS_LOCATION)
+    create_disk_rc: int = sp_call(
+        f"{vbox_manage_command()} createmedium disk --filename {os.path.join(VM_NAME, f'{VM_NAME}.vdi')} --size 20480 --format VDI --variant Standard",
+        accepted_return_codes=[0, 1]
+    )
+    if create_disk_rc == 1:
+        print("[yellow]VDI file already exists, continuing.")
+    print("[green]Operation successful.")
+    print("[blue]Adding SATA storage controller.")
+    add_storage_controller_rc: int = sp_call(f"{vbox_manage_command()} storagectl {VM_NAME} --name HDD --add sata --controller IntelAHCI --bootable on",
+                                             accepted_return_codes=[0, 1])
+    if add_storage_controller_rc == 1:
+        print("[yellow]SATA storage controller already exists, continuing.")
+    print("[green]Operation successful.")
+    print("[blue]Adding IDE storage controller, to mount the disk image.")
+    add_disk_controller_rc: int = sp_call(
+        f"{vbox_manage_command()} storagectl {VM_NAME} --name Disk_Image --add ide --bootable on",
+        accepted_return_codes=[0, 1]
+    )
+    if add_disk_controller_rc == 1:
+        print("[yellow]IDE storage controller already exists, continuing.")
 
 def attach_vm_controllers():
     pass
