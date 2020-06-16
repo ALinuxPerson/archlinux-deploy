@@ -127,7 +127,15 @@ def create_vm_controllers():
         print("[yellow]IDE storage controller already exists, continuing.")
 
 def attach_vm_controllers():
-    pass
+    print("[blue]Attaching HDD to SATA storage controller.")
+    sp_call(
+        f"{vbox_manage_command()} storageattach {VM_NAME} --storagectl HDD --device 0 --port 0 --type hdd --medium {os.path.join(VM_NAME, f'{VM_NAME}.vdi')}"
+    )
+    print("[blue]Attaching Arch Linux ISO to IDE controller.")
+    os.chdir(previous_dir)
+    sp_call(
+        f"{vbox_manage_command()} storageattach {VM_NAME} --storagectl Disk_Image --device 0 --port 0 --type dvddrive --medium arch-linux.iso"
+    )
 
 def run():
     stages: List[Callable] = [create_vm, set_vm_config, create_vm_controllers, attach_vm_controllers]
