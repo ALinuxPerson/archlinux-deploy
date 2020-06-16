@@ -208,5 +208,6 @@ def run():
             utils.colored_output(message, "error")
             return
         utils.colored_output(f"Stage 1 Substage {stage_name} completed!", "success")
+    utils.colored_output(f"Stage 1 completed!", "success")
 
 run()
