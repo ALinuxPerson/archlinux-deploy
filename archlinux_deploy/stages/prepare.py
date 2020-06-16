@@ -194,7 +194,6 @@ def create_virtualbox_vm():
         f"{vbox_manage_command()} storageattach {VM_NAME} --storagectl Disk_Image --device 0 --port 0 --type dvddrive --medium arch-linux.iso"
     )
 
-
 def run():
     stages: List[Callable] = [check_for_virtualbox, check_for_vboxapi, check_for_xpcom, download_latest_iso, create_virtualbox_vm]
     for stage in stages:
