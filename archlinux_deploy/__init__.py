@@ -13,9 +13,12 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import pathlib
 import os
 
 VM_NAME: str = os.getenv("ALD_VM_NAME", "arch-linux")
 VM_VRAM_SIZE: int = int(os.getenv("ALD_VM_VRAM_SIZE", 16))
 VM_MEM_SIZE: int = int(os.getenv("ALD_VM_MEM_SIZE", 1024))
 VM_IGNORE_DUPLICATES: bool = bool(int(os.getenv("ALD_VM_IGNORE_DUPLICATES", 0)))
+# shouldn't matter if the whitespace is escaped or not
+VBOX_VMS_LOCATION: str = os.getenv("ALD_VBOX_VMS_LOCATION", os.path.join(str(pathlib.Path.home()), "VirtualBox VMs"))
