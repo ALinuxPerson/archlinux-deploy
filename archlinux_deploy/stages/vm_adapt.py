@@ -154,5 +154,3 @@ def run():
             return
         utils.colored_output(f"Stage 2 Substage {stage_name} completed!", "success")
     utils.colored_output("Stage 2 completed!", "success")
-
-run()
