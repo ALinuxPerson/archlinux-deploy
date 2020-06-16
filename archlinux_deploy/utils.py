@@ -42,3 +42,5 @@ def in_path_env(file: str) -> bool:
     else:
         return False
 
+def bytes_to_string(byte_object: bytes) -> str:
+    return byte_object.decode("utf-8")
