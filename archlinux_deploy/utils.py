@@ -15,6 +15,8 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from typing import Any, Dict, List
 from rich import print
+import platform
+import os
 
 def colored_output(message: Any, level: str):
     levels: Dict[str, str] = {
@@ -28,3 +30,15 @@ def colored_output(message: Any, level: str):
 
     for line in to_print:
         print(f"{levels[level]}{line}")
+
+def in_path_env(file: str) -> bool:
+    PATH: List[str] = os.environ["PATH"].split(";" if platform.system() == "Windows" else ":")
+
+    for path in PATH:
+        file_path: str = os.path.join(os.path.sep, path, file)
+        if os.path.exists(file_path) and os.path.isfile(file_path) and os.access(file_path, os.X_OK):
+            return True
+        continue
+    else:
+        return False
+
