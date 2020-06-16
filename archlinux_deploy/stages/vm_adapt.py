@@ -19,6 +19,35 @@ from archlinux_deploy import utils
 from typing import List, Callable
 import virtualbox  # type: ignore
 from rich import print
+import subprocess
+
+def sp_call(command: str, accepted_return_codes: List[int] = None, ignore_return_code: bool = False):
+    if accepted_return_codes is None:
+        accepted_return_codes = [0]
+    called = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    called.wait()  # needed so that the we'll get the return code
+    stdout, stderr = called.communicate()
+    return_code: int = called.returncode
+    if return_code not in accepted_return_codes and not ignore_return_code:
+        raise BaseStageException(
+            f"Return code of command is {return_code} (not successful).\n"
+            f"Command passed: '{command}'\n"
+            f"Standard Output (stdout):\n"
+            f"{utils.bytes_to_string(stdout) or '(empty)'}\n"
+            f"Standard Error (stderr):\n"
+            f"{utils.bytes_to_string(stderr) or '(empty)'}"
+        )
+    return return_code
+
+def vbox_manage_command() -> str:
+    if utils.in_path_env("vboxmanage" if utils.is_posix() else "vboxmanage.exe"):
+        return "vboxmanage" if utils.is_posix() else "vboxmanage.exe"
+    elif utils.in_path_env("VboxManage" if utils.is_posix() else "VboxManage.exe"):
+        return "VboxManage" if utils.is_posix() else "VboxManage.exe"
+    else:
+        raise BaseStageException(
+            "It seems like the vboxmanage command isn't in PATH. Either check in /usr/lib/virtualbox or C:\\Program Files\\Virtualbox"
+        )
 
 def create_vm():
     vbox: virtualbox.VirtualBox = virtualbox.VirtualBox()
@@ -33,7 +62,7 @@ def create_vm():
 
     try:
         vm: virtualbox.library.IMachine = vbox.create_machine(
-            name="arch-linux",
+            name=VM_NAME,
             os_type_id="ArchLinux_64",
             groups=["/"],
             flags="",
@@ -45,7 +74,29 @@ def create_vm():
     print("[blue]Created and registered Arch Linux VM." if "arch-linux" not in vm_names else "[blue]Got Arch Linux VM.")
 
 def set_vm_config():
-    pass
+    vbox: virtualbox.VirtualBox = virtualbox.VirtualBox()
+    vm: virtualbox.library.IMachine = vbox.find_machine(VM_NAME)
+    print(f"[blue]Changing VRAM size to {VM_VRAM_SIZE} MB.")
+    try:
+        vm.vram_size = VM_VRAM_SIZE
+    except AttributeError:
+        print("[yellow]Couldn't change vram size using 'virtualbox' module, using subprocess instead")
+        sp_call(f"{vbox_manage_command()} modifyvm {VM_NAME} --vram {VM_VRAM_SIZE}")
+    print("[green]Operation successful.")
+    print(f"[blue]Changing memory size to {VM_MEM_SIZE} MB.")
+    try:
+        vm.memory_size = VM_MEM_SIZE
+    except Exception:  # virtualbox module raises a Exception exception
+        print("[yellow]Couldn't change memory size using 'virtualbox' module, using subprocess instead")
+        sp_call(f"{vbox_manage_command()} modifyvm {VM_NAME} --memory {VM_MEM_SIZE}")
+    print("[green]Operation successful.")
+    print("[blue]Changing graphics controller to vmsvga.")
+    try:
+        vm.graphics_controller_type = virtualbox.library.GraphicsControllerType.VMSVGA
+    except AttributeError:
+        print("[yellow]Couldn't change graphics controller type using 'virtualbox' module, using subprocess instead")
+        sp_call(f"{vbox_manage_command()} modifyvm {VM_NAME} --graphicscontroller vmsvga")
+    print("[green]Operation successful.")
 
 def create_vm_controllers():
     pass
