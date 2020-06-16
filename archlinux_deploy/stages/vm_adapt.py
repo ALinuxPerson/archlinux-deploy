@@ -13,4 +13,36 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from archlinux_deploy.stages import exceptions
+from archlinux_deploy import utils
+from typing import List, Callable
 
+def create_vm():
+    pass
+
+def set_vm_config():
+    pass
+
+def create_vm_controllers():
+    pass
+
+def attach_vm_controllers():
+    pass
+
+def run():
+    stages: List[Callable] = [create_vm, set_vm_config, create_vm_controllers, attach_vm_controllers]
+    for stage in stages:
+        stage_name = stage.__name__
+        utils.colored_output(f"Stage 2 Substage {stage_name} started!", "info")
+        try:
+            stage()
+        except exceptions.BaseStageException as error:
+            message: str = error.args[0]
+            utils.colored_output(
+                f"Stage 2 Substage {stage_name} FAILED:\n"
+                f"{message}",
+                "error"
+            )
+            return
+        utils.colored_output(f"Stage 2 Substage {stage_name} completed!", "success")
+    utils.colored_output("Stage 2 completed!", "success")
