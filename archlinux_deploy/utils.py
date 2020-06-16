@@ -44,3 +44,10 @@ def in_path_env(file: str) -> bool:
 
 def bytes_to_string(byte_object: bytes) -> str:
     return byte_object.decode("utf-8")
+
+def is_posix() -> bool:
+    try:
+        import posix
+        return True
+    except ModuleNotFoundError:
+        return False
