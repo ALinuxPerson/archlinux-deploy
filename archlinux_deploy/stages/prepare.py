@@ -24,6 +24,16 @@ import subprocess
 import requests
 import os
 
+def check_for_virtualbox():
+    print("[blue]Checking if virtualbox is installed...")
+    if not utils.in_path_env("virtualbox"):
+        raise BaseStageException(
+            "It seems like virtualbox isn't installed.\n"
+            "Either install it from the website if you're using Windows, install it from the app store if you're running Mac,\n"
+            "or install it using your distribution's package manager if you're using FreeBSD or Linux."
+        )
+    print("[blue]It is.")
+
 def check_for_vboxapi():
     try:
         print("[blue]Checking if module 'vboxapi' is installed...")
@@ -186,7 +196,7 @@ def create_virtualbox_vm():
 
 
 def run():
-    stages: List[Callable] = [check_for_vboxapi, check_for_xpcom, download_latest_iso, create_virtualbox_vm]
+    stages: List[Callable] = [check_for_virtualbox, check_for_vboxapi, check_for_xpcom, download_latest_iso, create_virtualbox_vm]
     for stage in stages:
         stage_name: str = stage.__name__
         utils.colored_output(f"Stage 1 Substage {stage_name} started!", "info")
