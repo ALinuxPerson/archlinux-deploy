@@ -20,10 +20,10 @@ import os
 
 def colored_output(message: Any, level: str):
     levels: Dict[str, str] = {
-        "info": "[bold blue]🛈: ",
-        "warn": "[bold yellow]⚠: ",
-        "success": "[bold green]✔: ",
-        "error": "[bold red]✗: "
+        "info": "[bold blue]🛈 ",
+        "warn": "[bold yellow]⚠ ",
+        "success": "[bold green]✔ ",
+        "error": "[bold red]✗ "
     }
 
     to_print: List[str] = str(message).splitlines()
